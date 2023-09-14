@@ -1,0 +1,4 @@
+NetworkMonitoring 
+| where LatencyHealthState <> "Healthy" 
+| where Computer != "" 
+| distinct Computer
