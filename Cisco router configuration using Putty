@@ -1,0 +1,80 @@
+Configuring a Cisco router using PuTTY involves establishing a console connection to the router through a serial interface. Here are the steps to configure a Cisco router using PuTTY:
+
+1. **Prerequisites:**
+   - Cisco router with console and auxiliary ports.
+   - Console cable (usually RJ-45 to DB-9 or USB to RJ-45).
+   - PuTTY terminal emulation software installed on your computer.
+   - USB-to-Serial adapter (if your computer lacks a native serial port).
+
+2. **Connect Hardware:**
+   - Connect one end of the console cable to the console port on the Cisco router.
+   - Connect the other end of the cable to the USB-to-Serial adapter (if needed) and then plug it into your computer's USB port.
+
+3. **Identify the Serial Port:**
+   - Determine the COM port assigned to the USB-to-Serial adapter. You can find this in the Device Manager on Windows or by using a similar method on other operating systems.
+
+4. **Launch PuTTY:**
+   - Open PuTTY on your computer.
+
+5. **Configure PuTTY:**
+   - In the PuTTY Configuration window:
+     - Under "Session," select "Serial" as the connection type.
+     - In the "Serial line" field, enter the COM port assigned to your USB-to-Serial adapter (e.g., COM1, COM2, etc.).
+     - Set the "Speed" (baud rate) to 9600 (the default for most Cisco routers).
+     - Click the "Open" button to establish the connection.
+
+6. **Access the Router:**
+   - Power on or restart the Cisco router if it's not already running.
+   - You should now see the router's console output in the PuTTY terminal window.
+
+7. **Log In:**
+   - Once the router is fully booted, you'll be prompted to log in. Enter the username and password if required. The default is often "cisco" for both username and password, but this may vary depending on the router's configuration.
+
+8. **Enter Configuration Mode:**
+   - After logging in, you'll typically start in user EXEC mode (indicated by the ">" prompt). To configure the router, enter privileged EXEC mode by typing:
+     ```
+     enable
+     ```
+   - You may need to enter the enable password if configured.
+
+9. **Enter Global Configuration Mode:**
+   - Once in privileged EXEC mode (indicated by the "#" prompt), enter global configuration mode by typing:
+     ```
+     configure terminal
+     ```
+     or simply:
+     ```
+     conf t
+     ```
+
+10. **Configure Router:**
+    - You can now configure various router settings as needed. For example, to configure an interface, you would type:
+      ```
+      interface GigabitEthernet0/0
+      ```
+      Followed by the specific configuration commands for that interface.
+
+11. **Exit Configuration Mode:**
+    - To exit global configuration mode and return to privileged EXEC mode, type:
+      ```
+      exit
+      ```
+
+12. **Save Configuration:**
+    - After configuring the router, make sure to save the changes to the startup configuration by typing:
+      ```
+      write memory
+      ```
+      or simply:
+      ```
+      wr
+      ```
+
+13. **Disconnect:**
+    - To disconnect from the router, type:
+      ```
+      exit
+      ```
+      or press `Ctrl + D`.
+
+That's how you can configure a Cisco router using PuTTY over a serial connection. Make sure to replace the specific interface names and configuration commands with your router's actual configuration requirements.
