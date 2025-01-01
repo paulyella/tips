@@ -1,0 +1,111 @@
+a sample CI/CD pipeline script using Terraform for provisioning infrastructure. This script assumes the use of GitHub Actions as the CI/CD pipeline, though you can adapt it for other tools like Jenkins or GitLab CI/CD.
+
+Directory Structure
+Before we start, here's a suggested structure:
+
+/project
+  ├── main.tf         # Terraform configuration
+  ├── variables.tf    # Terraform variables
+  ├── outputs.tf      # Terraform outputs
+  ├── .github/
+      └── workflows/
+          └── terraform.yml # GitHub Actions workflow
+Terraform Files
+main.tf
+
+provider "aws" {
+  region = var.aws_region
+}
+
+resource "aws_s3_bucket" "example" {
+  bucket = var.bucket_name
+  acl    = "private"
+}
+
+output "bucket_name" {
+  value = aws_s3_bucket.example.bucket
+}
+variables.tf
+
+variable "aws_region" {
+  default = "us-west-2"
+}
+
+variable "bucket_name" {
+  description = "The name of the S3 bucket to create"
+  type        = string
+}
+outputs.tf
+
+output "s3_bucket_id" {
+  value = aws_s3_bucket.example.id
+}
+GitHub Actions Workflow
+.github/workflows/terraform.yml
+
+name: Terraform CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Setup Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+
+    # Step 3: Initialize Terraform
+    - name: Terraform Init
+      run: terraform init
+
+    # Step 4: Validate Terraform code
+    - name: Terraform Validate
+      run: terraform validate
+
+    # Step 5: Plan Terraform changes
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+
+    # Step 6: Apply Terraform changes (optional for PRs)
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' # Only apply on pushes to main
+      run: terraform apply -auto-approve tfplan
+Explanation of Workflow Steps
+Trigger Events (on):
+Runs on a push to the main branch or for a pull_request.
+Checkout Code:
+Uses actions/checkout to retrieve the repository's code.
+Setup Terraform:
+Ensures Terraform is installed on the runner.
+Terraform Init:
+Initializes the Terraform workspace, downloads providers, and prepares the backend.
+Validate:
+Checks the syntax and validity of the Terraform code.
+Plan:
+Generates an execution plan (tfplan) to show what will change.
+Apply:
+Applies the planned changes (tfplan) only for pushes to the main branch.
+Secure Environment Variables
+Store sensitive data like AWS credentials in GitHub Secrets:
+Go to your GitHub repository settings.
+Navigate to Secrets and variables > Actions.
+Add secrets like:
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+Modify the terraform.yml to use these secrets:
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+This CI/CD pipeline automates the process of validating, planning, and applying Terraform configurations to manage infrastructure efficiently.
